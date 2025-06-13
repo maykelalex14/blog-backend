@@ -24,9 +24,9 @@ export const getPosts = async (_req: Request, res: Response): Promise<void> => {
         });
 
         // Format the response to handle comment author names correctly
-        const formattedPosts = posts.map(post => ({
+        const formattedPosts = posts.map((post: any) => ({
             ...post,
-            comments: post.comments.map(comment => ({
+            comments: post.comments.map((comment: any) => ({
                 ...comment,
                 commenterName: comment.author ? comment.author.username : comment.userName
             }))
@@ -70,7 +70,7 @@ export const getPost = async (req: Request, res: Response): Promise<void> => {
         // Format the response to handle comment author names correctly
         const formattedPost = {
             ...post,
-            comments: post.comments.map(comment => ({
+            comments: post.comments.map((comment: any) => ({
                 ...comment,
                 commenterName: comment.author ? comment.author.username : comment.userName
             }))

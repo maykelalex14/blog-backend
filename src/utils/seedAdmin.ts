@@ -1,7 +1,7 @@
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '@prisma/client';
 import { hashPassword } from './hash';
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 
 export const seedAdminUser = async () => {
   try{

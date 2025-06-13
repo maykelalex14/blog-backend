@@ -11,10 +11,13 @@ import { seedAdminUser } from './utils/seedAdmin';
 dotenv.config();
 
 const app = express();
-const port = 3001;
+const port = 3000;
 
 // Middleware
-app.use(cors()); // Add CORS support
+app.use(cors({
+    origin: 'http://localhost:3000',
+    credentials: true
+})); // Restrict CORS to frontend
 app.use(express.json());
 
 // Homepage route
@@ -27,6 +30,9 @@ app.use('/api/users', userRoutes);
 app.use('/api/posts', postRoutes);
 app.use('/api/comments', commentRoutes);
 app.use('/auth', authRoutes);
+
+// Direct POST /signup route for convenience
+app.post('/signup', require('./controllers/authController').signup);
 
 // Start the server
 app.listen(port, async () => {

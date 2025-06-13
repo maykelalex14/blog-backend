@@ -22,7 +22,18 @@ export const signup = async (req: Request, res: Response): Promise<any> => {
     },
   });
 
-  res.status(201).json({ message: 'User created', user: { id: user.id, username: user.username } });
+  // Generate JWT token for the new user
+  const token = jwt.sign(
+    { userId: user.id, role: user.role },
+    process.env.JWT_SECRET!,
+    { expiresIn: '24h' }
+  );
+
+  res.status(201).json({
+    message: 'User created',
+    token,
+    user: { id: user.id, username: user.username, role: user.role }
+  });
 };
 
 export const login = async (req: Request, res: Response): Promise<any> => {

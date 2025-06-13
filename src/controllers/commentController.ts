@@ -16,10 +16,13 @@ export const getAllComments = async (_req: Request, res: Response): Promise<any>
         });
         
         // Transform the response to include the proper commenter name
-        const formattedComments = comments.map(comment => ({
-            ...comment,
-            commenterName: comment.author ? comment.author.username : comment.userName
-        }));
+        const formattedComments = comments.map((comment: unknown) => {
+            const c = comment as any;
+            return {
+                ...c,
+                commenterName: c.author ? c.author.username : c.userName
+            };
+        });
         
         return res.status(200).json(formattedComments);
     } catch (error) {
