@@ -2,52 +2,43 @@ import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 
+dotenv.config();
+
+export interface JwtUser {
+  id: number;
+  role: string;
+}
+
 declare global {
   namespace Express {
     interface Request {
-      user?: any;
+      user?: JwtUser;
     }
   }
 }
 
-dotenv.config();
-
 export const authenticateToken = (req: Request, res: Response, next: NextFunction): void => {
   const authHeader = req.headers['authorization'];
   const token = authHeader?.split(' ')[1];
-
   if (!token) {
-    res.sendStatus(401);
+    res.status(401).json({ message: 'No token provided' });
     return;
   }
 
-  jwt.verify(token, process.env.JWT_SECRET!, (err: any, decoded: any) => {
+  jwt.verify(token, process.env.JWT_SECRET!, (err, decoded: any) => {
     if (err) {
-      res.sendStatus(403);
+      res.status(403).json({ message: 'Invalid token' });
       return;
     }
-
-    if (!decoded) {
-      res.sendStatus(401);
-      return;
-    }
-
-    // Set user info including role from the JWT token
-    req.user = {
-      id: decoded.userId,
-      role: decoded.role
-    };
+    req.user = { id: decoded.userId, role: decoded.role };
     next();
   });
 };
 
-export const authorizeRole = (roles: string[]) => {
-  return (req: Request, res: Response, next: NextFunction): void => {
-    const userRole = (req.user as any).role;
-    if (!roles.includes(userRole)) {
-      res.status(403).json({ 
-        message: `Access denied. Required role: ${roles.join(' or ')}`
-      });
+export const authorizeRoles = (roles: string[]) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    if (!req.user || !roles.includes(req.user.role)) {
+      res.status(403).json({ message: 'Forbidden: insufficient role' });
       return;
     }
     next();

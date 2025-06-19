@@ -63,4 +63,9 @@ model Comment {
 enum Role {
   WRITER
   ADMIN
+  CUSTOMER
+  MANAGER
+  CHEF
+  HQMANAGER
+  CASHIER
 }

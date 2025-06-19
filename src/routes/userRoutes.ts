@@ -7,7 +7,7 @@ import {
     adminChangeRole,
     adminDeleteUser
 } from '../controllers/userController';
-import { authenticateToken, authorizeRole } from '../middleware/authMiddleware';
+import { authenticateToken, authorizeRoles } from '../middleware/authMiddleware';
 
 const router = Router();
 
@@ -17,7 +17,7 @@ router.get('/:id', authenticateToken, getUserById);            // View user deta
 
 // Admin routes - require authentication and admin role
 // Using properly chained middleware functions
-router.use('/admin', authenticateToken, authorizeRole(['ADMIN']));  // Protect all admin routes
+router.use('/admin', authenticateToken, authorizeRoles(['admin']));  // Protect all admin routes
 
 // Group all admin routes
 router.post('/', adminCreateUser);         // Create new user

@@ -39,6 +39,7 @@ export const signup = async (req: Request, res: Response): Promise<any> => {
 export const login = async (req: Request, res: Response): Promise<any> => {
   const { username, password } = req.body;
 
+  // Find user by username
   const user = await prisma.user.findUnique({
     where: { username },
     select: {
@@ -52,9 +53,11 @@ export const login = async (req: Request, res: Response): Promise<any> => {
   });
   if (!user) return res.status(401).json({ message: 'Invalid credentials' });
 
+  // Compare password
   const valid = await comparePassword(password, user.password);
   if (!valid) return res.status(401).json({ message: 'Invalid credentials' });
 
+  // Issue JWT with id and role
   const token = jwt.sign(
     { userId: user.id, role: user.role },
     process.env.JWT_SECRET!,
